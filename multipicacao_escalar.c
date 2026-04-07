@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     }
 
     const char *nome_arquivo = argv[1];
-    int valor_matriz = atoi(argv[2]);
+    double fator_escalar = atof(argv[2]);
 
     int largura = 0, altura = 0, canais = 0;
     unsigned char *imagem = stbi_load(nome_arquivo, &largura, &altura, &canais, 0);
@@ -28,12 +28,12 @@ int main(int argc, char *argv[]) {
 
     int total_pixels = largura * altura * canais;
     for (int i = 0; i < total_pixels; i++) {
-        int novo_valor = (int) imagem[i] + valor_matriz;
+        int novo_valor = (int) (imagem[i] * fator_escalar);
         imagem[i] = (unsigned char) clamp_int(novo_valor);
     }
 
-    if (stbi_write_jpg("resultado_soma.jpg", largura, altura, canais, imagem, 100)) {
-        printf("imagem salva 'resultado_soma.jpg'\n");
+    if (stbi_write_jpg("resultado_multiplicacao.jpg", largura, altura, canais, imagem, 100)) {
+        printf("imagem salva 'resultado_multiplicacao.jpg'\n");
     } else {
         printf("nao foi possivel salvar.\n");
         stbi_image_free(imagem);

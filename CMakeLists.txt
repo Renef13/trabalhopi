@@ -7,4 +7,5 @@ add_library(trabalhopi STATIC library.c
         corte-mediana.c
         linear.c
         k-means.c
-        soma.c)
+        soma.c
+        multipicacao_escalar.c)
