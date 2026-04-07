@@ -8,4 +8,6 @@ add_library(trabalhopi STATIC library.c
         linear.c
         k-means.c
         soma.c
-        multipicacao_escalar.c)
+        multipicacao_escalar.c
+        divisao_escalar.c)
+
