@@ -6,4 +6,5 @@ set(CMAKE_C_STANDARD 11)
 add_library(trabalhopi STATIC library.c
         corte-mediana.c
         linear.c
-        k-means.c)
+        k-means.c
+        soma.c)
