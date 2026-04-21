@@ -3,10 +3,10 @@
 #include <string.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../stb_image.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "../stb_image_write.h"
 
 static int comparar_valores(const void *a, const void *b) {
     return (*(unsigned char*)a - *(unsigned char*)b);
@@ -47,18 +47,42 @@ static void aplicar_corte_mediana(unsigned char *pixels, int total_pixels, int t
     free(intervalos);
 }
 
+char* extrair_nome_arquivo(const char *caminho) {
+    const char *nome = strrchr(caminho, '/');
+    if (!nome) nome = strrchr(caminho, '\\');
+    if (!nome) nome = caminho;
+    else nome++;
+
+    char *resultado = malloc(strlen(nome) + 1);
+    strcpy(resultado, nome);
+
+    char *ponto = strrchr(resultado, '.');
+    if (ponto) *ponto = '\0';
+
+    return resultado;
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 3) {
         printf("Uso: %s <imagem.jpg> <num_cores>\n", argv[0]);
         return 1;
     }
 
-    int largura, altura, canais;
-    unsigned char *imagem = stbi_load(argv[1], &largura, &altura, &canais, 1);
+    char *nome_sem_ext = extrair_nome_arquivo(argv[1]);
     int quantidade_cores = atoi(argv[2]);
+
+    char caminho_entrada[256];
+    sprintf(caminho_entrada, "../data/%s", argv[1]);
+
+    char caminho_saida[256];
+    sprintf(caminho_saida, "../resultado/%s_resultado.jpg", nome_sem_ext);
+
+    int largura, altura, canais;
+    unsigned char *imagem = stbi_load(caminho_entrada, &largura, &altura, &canais, 1);
 
     if (!imagem) {
         printf("erro ao carregar imagem.\n");
+        free(nome_sem_ext);
         return 1;
     }
 
@@ -69,10 +93,11 @@ int main(int argc, char *argv[]) {
         imagem[i] = mapa[imagem[i]];
     }
 
-    if (stbi_write_jpg("resultado_corte_mediana.jpg", largura, altura, 1, imagem, 100)) {
-        printf("imagem salva como 'resultado_corte_mediana.jpg' com %d cores.\n", quantidade_cores);
+    if (stbi_write_jpg(caminho_saida, largura, altura, 1, imagem, 100)) {
+        printf("imagem salva como '%s' com %d cores.\n", caminho_saida, quantidade_cores);
     }
 
     stbi_image_free(imagem);
+    free(nome_sem_ext);
     return 0;
 }

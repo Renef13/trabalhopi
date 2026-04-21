@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../stb_image.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "../stb_image_write.h"
 
 static int clamp_int(int v) {
 	return v < 0 ? 0 : (v > 255 ? 255 : v);
@@ -35,16 +36,37 @@ static void inicializar_centroides(unsigned char *img, int total_pixels, int can
 	}
 }
 
+char* extrair_nome_arquivo(const char *caminho) {
+    const char *nome = strrchr(caminho, '/');
+    if (!nome) nome = strrchr(caminho, '\\');
+    if (!nome) nome = caminho;
+    else nome++;
+
+    char *resultado = malloc(strlen(nome) + 1);
+    strcpy(resultado, nome);
+
+    char *ponto = strrchr(resultado, '.');
+    if (ponto) *ponto = '\0';
+
+    return resultado;
+}
+
 int main(int argc, char *argv[]) {
 	if (argc < 3) {
 		printf("Uso: %s <imagem> <k> [iteracoes] [seed]\n", argv[0]);
 		return 1;
 	}
 
-	const char *nome_arquivo = argv[1];
+	char *nome_sem_ext = extrair_nome_arquivo(argv[1]);
 	int k = atoi(argv[2]);
 	int max_iter = argc >= 4 ? atoi(argv[3]) : 10;
 	int usar_aleatorio = argc >= 5;
+
+	char caminho_entrada[256];
+	sprintf(caminho_entrada, "../data/%s", argv[1]);
+
+	char caminho_saida[256];
+	sprintf(caminho_saida, "../resultado/%s_resultado.jpg", nome_sem_ext);
 
 	if (k <= 0) {
 		printf("k deve ser maior que zero.\n");
@@ -62,9 +84,10 @@ int main(int argc, char *argv[]) {
 	}
 
 	int largura = 0, altura = 0, canais = 0;
-	unsigned char *imagem = stbi_load(nome_arquivo, &largura, &altura, &canais, 0);
+	unsigned char *imagem = stbi_load(caminho_entrada, &largura, &altura, &canais, 0);
 	if (!imagem) {
-		printf("nao foi possivel carregar a imagem '%s'.\n", nome_arquivo);
+		printf("nao foi possivel carregar a imagem '%s'.\n", caminho_entrada);
+		free(nome_sem_ext);
 		return 1;
 	}
 	if (canais != 1 && canais != 3) {
@@ -155,13 +178,17 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	if (stbi_write_jpg("resultado_kmeans.jpg", largura, altura, canais, imagem, 100)) {
-		printf("imagem salva como 'resultado_kmeans.jpg' com %d cores.\n", k);
+	if (stbi_write_jpg(caminho_saida, largura, altura, canais, imagem, 100)) {
+		printf("imagem salva como '%s' com %d cores.\n", caminho_saida, k);
 	} else {
 		printf("nao foi possivel salvar a imagem.\n");
+		stbi_image_free(imagem);
+		free(nome_sem_ext);
+		return 1;
 	}
 
 	stbi_image_free(imagem);
+	free(nome_sem_ext);
 	free(centroides);
 	free(novos_centroides);
 	free(contagens);
