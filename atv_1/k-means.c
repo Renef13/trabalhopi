@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 	sprintf(caminho_entrada, "../data/%s", argv[1]);
 
 	char caminho_saida[256];
-	sprintf(caminho_saida, "../resultado/%s_resultado.jpg", nome_sem_ext);
+	sprintf(caminho_saida, "../resultado/%s_quant_k-means.jpg", nome_sem_ext);
 
 	if (k <= 0) {
 		printf("k deve ser maior que zero.\n");

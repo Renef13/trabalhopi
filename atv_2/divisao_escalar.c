@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     sprintf(caminho_entrada, "../data/%s", argv[1]);
 
     char caminho_saida[256];
-    sprintf(caminho_saida, "../resultado/%s_resultado.jpg", nome_sem_ext);
+    sprintf(caminho_saida, "../resultado/%s_div_escalar.jpg", nome_sem_ext);
 
     if (divisor == 0.0) {
         printf("nao eh possivel dividir por zero.\n");

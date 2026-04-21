@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     sprintf(caminho_entrada, "../data/%s", argv[1]);
 
     char caminho_saida[256];
-    sprintf(caminho_saida, "../resultado/%s_resultado.jpg", nome_sem_ext);
+    sprintf(caminho_saida, "../resultado/%s_quant_linear.jpg", nome_sem_ext);
 
 
     if (fator_quantizacao <= 0 || fator_quantizacao > 256) {
